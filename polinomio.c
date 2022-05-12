@@ -1,31 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifndef POLINOMIO_H
-#define POLINOMIO_H
+#ifndef Polinomio_H
+#define Polinomio_H
 
 typedef struct {
-    int num1;
-    int num2;
-} POLINOMIO;
+    int coeff;
+    int exp;
+} Polinomio;
 
-// O asterisco indica que a função retorna um ponteiro do tipo polinomio
-POLINOMIO* criar(int item1, int item2);
-void somar(POLINOMIO *item1, POLINOMIO *item2);
-void avaliar(POLINOMIO *item);
+// TODO criar array da struct
+// O asterisco indica que a função retorna um ponteiro do tipo Polinomio
+Polinomio* criar(int item1, int item2);
+void somar(Polinomio *item1, Polinomio *item2);
+void avaliar(Polinomio *item);
 
 #endif
 
-int main() {
+void main() {
     // TODO testar a diferença do *poliX = criar e poliX = *criar
-    POLINOMIO *poli1 = criar(2, 4);
-    POLINOMIO *poli2 = criar(3, 5);
+    Polinomio *poli1 = criar(2, 4);
+    Polinomio *poli2 = criar(3, 5);
 
-    // aparentemente o endereço de (void *)poliX é o mesmo de poliX->num1
-    printf("Struct adress: %p, Num1 adress: %p, Num2 adress: %p\n", (void *)poli1, (int *)&poli1->num1, (int *)&poli1->num2);
-    printf("Num1: %d, Num2: %d\n", poli1->num1, poli1->num2);
-    printf("Struct adress: %p, Num1 adress: %p, Num2 adress: %p\n", (void *)poli2, (int *)&poli2->num1, (int *)&poli2->num2);
-    printf("Num1: %d, Num2: %d\n", poli2->num1, poli2->num2);
+    // aparentemente o endereço de (void *)poliX é o mesmo de poliX.coeff
+    printf("Struct adress: %p, coeff adress: %p, exp adress: %p\n", (void *)poli1, (int *)&poli1[1].coeff, (int *)&poli1[1].exp);
+    printf("coeff: %d, exp: %d\n", poli1[1].coeff, poli1[1].exp);
+    printf("Struct adress: %p, coeff adress: %p, exp adress: %p\n", (void *)poli2, (int *)&poli2[1].coeff, (int *)&poli2[1].exp);
+    printf("coeff: %d, exp: %d\n", poli2[1].coeff, poli2[1].exp);
 
     somar(poli1, poli2);
 
@@ -33,22 +34,25 @@ int main() {
     free((void *)poli2);
 };
 
-POLINOMIO* criar(int item1, int item2) {
-    POLINOMIO *poli = (POLINOMIO *) malloc(sizeof(POLINOMIO));
+Polinomio* criar(int item1, int item2) {
+    Polinomio *poli = (Polinomio *) malloc(sizeof(Polinomio)*10);
+    int termos, i;
 
-    poli->num1 = item1;
-    poli->num2 = item2;
+    for(i = 0; i < termos; i++) {
+        poli[i].coeff = item1;
+        poli[i].exp = item2;
+    }
 
     return poli;
 }
 
 // TODO terminar a função somar
-void somar(POLINOMIO *item1, POLINOMIO *item2) {
+void somar(Polinomio *item1, Polinomio *item2) {
     int sum1, sum2;
 
-    sum1 = item1->num1 + item2->num1;
-    sum2 = item1->num2 + item2->num2;
+    sum1 = item1.coeff + item2.coeff;
+    sum2 = item1.exp + item2.exp;
 
-    printf("Sum num1 = %d, Sum num2 = %d\n", sum1, sum2);
+    printf("Sum coeff = %d, Sum exp = %d\n", sum1, sum2);
 }
 

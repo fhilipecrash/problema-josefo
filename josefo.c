@@ -1,3 +1,9 @@
+/*
+João Luiz Mineiro Alves
+Fernando Soares de Araújo Filho
+José Fhilipe Martins Coelho
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -118,7 +124,9 @@ void remover_soldado(Lista* lista, int num_soldado) {
 
 void josefo(Lista* lista, int pulo) {
     No* item = lista->cabeca->proximo;
-    // Nó auxiliar pra guardar o ponteiro do próximo.
+    /* O ponteiro auxiliar serve pra guardar a referência da lista
+    pois a remoção do elemento faz a função perder a referência da lista.
+    */ 
     No* aux;
     int c = 1;
 

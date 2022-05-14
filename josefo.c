@@ -22,8 +22,10 @@ struct lista {
 };
 
 // Auxiliares.
+void inserir_soldados(Lista* lista);
+void inserir_pulo(Lista* lista);
 void mostrar_soldados(Lista* lista);
-void inserir_soldado(Lista* lista, int total_soldados);
+void popular_lista(Lista* lista, int total_soldados);
 void remover_soldado(Lista* lista, int num_soldado);
 void josefo(Lista* lista, int pulo);
 
@@ -36,16 +38,9 @@ void main() {
     lista_soldados->cabeca->proximo = lista_soldados->cabeca;
     lista_soldados->cabeca->num = 0;
     lista_soldados->tamanho = 0;
-    
-    int resp_soldados;
-    int resp_pulos;
 
-    printf("Insira o número de soldados: ");
-    scanf("%d", &resp_soldados);
-    printf("Insira o tamanho do pulo: ");
-    scanf("%d", &resp_pulos);
-    inserir_soldado(lista_soldados, resp_soldados);
-    josefo(lista_soldados, resp_pulos);
+    inserir_soldados(lista_soldados);
+    inserir_pulo(lista_soldados);
 }
 
 // Usa o tamanho da lista no for para percorrer todos os itens e mostrar os soldados.
@@ -61,11 +56,59 @@ void mostrar_soldados(Lista* lista) {
     printf("\n");
 }
 
+// TODO verificar se o valor digitado é inteiro(excluindo char, \n ou EOF).
+void inserir_soldados(Lista* lista) {
+    int resp_soldados, teste, ch;
+    
+    printf("Insira o número de soldados(inserir 0 sai do programa): ");
+    teste = scanf("%d", &resp_soldados);
+    printf("\n");
+    while (teste == 0) {
+        // TODO Entender o que é fprint
+        // Faz a validação do valor digitado pelo usuário
+        fprintf(stderr, "Valor inválido. Insira um número inteiro!\n");
+        printf("Insira o número de soldados(inserir 0 sai do programa): ");
+        do {
+            ch = getchar();
+        } while ((ch != EOF) && (ch != '\n'));
+        teste = scanf("%d", &resp_soldados);
+        printf("\n");
+    }
+    if (resp_soldados != 0) {
+        popular_lista(lista, resp_soldados);
+    } else {
+        printf("Tchau!\n");
+    }
+}
+
+void inserir_pulo(Lista* lista) {
+    int resp_pulos, teste, ch;
+
+    while (1) {   
+        printf("Insira o tamanho do pulo(exceto 0): ");
+        teste = scanf("%d", &resp_pulos);
+        while (teste == 0) {
+            fprintf(stderr, "Valor inválido. Insira um número inteiro!\n");
+            printf("Insira o tamanho do pulo(exceto 0): ");
+            do {
+                ch = getchar();
+            } while ((ch != EOF) && (ch != '\n'));
+            teste = scanf("%d", &resp_pulos);
+        }
+        if (resp_pulos == 0) {
+            printf("Não se pode ter um pulo de 0\n");
+        } else {
+            josefo(lista, resp_pulos);
+            break;
+        }
+    }
+}
+
 /*
 Recebe o valor dos soldados que vão ser adicionados
 criando um novo nó a cada repetição.
 */
-void inserir_soldado(Lista* lista, int total_soldados) {
+void popular_lista(Lista* lista, int total_soldados) {
     int c;
 
     for (c = 1; c < total_soldados+1; c++) {
@@ -123,38 +166,71 @@ void remover_soldado(Lista* lista, int num_soldado) {
 }
 
 void josefo(Lista* lista, int pulo) {
-    No* item = lista->cabeca->proximo;
     /* O ponteiro auxiliar serve pra guardar a referência da lista
     pois a remoção do elemento faz a função perder a referência da lista.
     */ 
     No* aux;
-    int c = 1;
+    if (pulo > 0) {
+        No* item = lista->cabeca->proximo;
+        int c = 1;
 
-    // While 1 (true) faz a lista circular ser lida infinitamente.
-    while (1) {
-        // Ignora o nó de index 0(nó cabeça) e faz apontar pro próximo item da lista.
-        if (item->num != 0) {
-            if (lista->tamanho == 1) {
-                printf("O último soldado foi %d\n", item->num);
-                // Quando restar apenas um elemeno na lista com exceção do nó cabeça o programa para.
-                break;
-            }
+        // While 1 (true) faz a lista circular ser lida infinitamente.
+        while (1) {
+            // Ignora o nó de index 0(nó cabeça) e faz apontar pro próximo item da lista.
+            if (item->num != 0) {
+                if (lista->tamanho == 1) {
+                    printf("O último soldado foi %d\n", item->num);
+                    // Quando restar apenas um elemeno na lista com exceção do nó cabeça o programa para.
+                    break;
+                }
 
-            /* 
-            Só remove o soldado quando o valor de C for igual o do pulo, usa a variável auxiliar pra guardar o ponteiro do próximo
-            depois remove e então a variável item recebe o valor guardado na variável auxiliar.
-            */
-            if (c == pulo) {
-                aux = item->proximo;
-                remover_soldado(lista, item->num);
-                c = 1;
-                item = aux;
+                /* 
+                Só remove o soldado quando o valor de C for igual o do pulo, usa a variável auxiliar pra guardar o ponteiro do próximo
+                depois remove e então a variável item recebe o valor guardado na variável auxiliar.
+                */
+                if (c == pulo) {
+                    aux = item->proximo;
+                    remover_soldado(lista, item->num);
+                    c = 1;
+                    item = aux;
+                } else {
+                    item = item->proximo;
+                    c++;
+                }
             } else {
                 item = item->proximo;
-                c++;
             }
-        } else {
-            item = item->proximo;
+        }
+    } else {
+        No* item = lista->cabeca->anterior;
+        int c = -1;
+
+        // While 1 (true) faz a lista circular ser lida infinitamente.
+        while (1) {
+            // Ignora o nó de index 0(nó cabeça) e faz apontar pro próximo item da lista.
+            if (item->num != 0) {
+                if (lista->tamanho == 1) {
+                    printf("O último soldado foi %d\n", item->num);
+                    // Quando restar apenas um elemeno na lista com exceção do nó cabeça o programa para.
+                    break;
+                }
+
+                /* 
+                Só remove o soldado quando o valor de C for igual o do pulo, usa a variável auxiliar pra guardar o ponteiro do próximo
+                depois remove e então a variável item recebe o valor guardado na variável auxiliar.
+                */
+                if (c == pulo) {
+                    aux = item->anterior;
+                    remover_soldado(lista, item->num);
+                    c = -1;
+                    item = aux;
+                } else {
+                    item = item->anterior;
+                    c--;
+                }
+            } else {
+                item = item->anterior;
+            }
         }
     }
 }

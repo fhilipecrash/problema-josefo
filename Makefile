@@ -1,7 +1,10 @@
-all: josefo
+COMPILER=gcc
 
-josefo: josefo.c
-	gcc -o josefo.o josefo.c
+all: josefo.c
+	$(COMPILER) $?
+
+run:
+	./a.out
 
 clean:
-	rm -rf *.o *~
+	rm *.out

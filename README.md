@@ -4,7 +4,7 @@ Algoritmo que resolve o problema matemático de Josefo usando listas duplamente 
 Feito para um trabalho da disciplina de Estrutura de Dados da UESPI.
 Sinta-se livre para usar, estudar e modificar o código.
 
-**IMPORTANT**: O repositório e o código-fonte estão inteiramente em português porque a intenção é ajudar outros estudantes que falam o idioma.
+**IMPORTANTE**: O repositório e o código-fonte estão inteiramente em português porque a intenção é ajudar outros estudantes que falam o idioma.
 
 ## Como funciona
 

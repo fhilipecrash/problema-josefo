@@ -2,6 +2,7 @@
 
 Algoritmo que resolve o problema matemático de Josefo usando listas duplamente encadeadas.
 Feito para um trabalho da disciplina de Estrutura de Dados da UESPI.
+Sinta-se livre para usar, estudar e modificar o código.
 
 ## Como funciona
 

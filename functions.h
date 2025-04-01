@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "list.h"
 
-// Auxiliares.
+// Protótipos das funções
 void inserir_soldados(Lista* lista);
 int inserir_pulo();
 void mostrar_soldados(Lista* lista);
@@ -10,31 +10,32 @@ void popular_lista(Lista* lista, int total_soldados);
 void remover_soldado(Lista* lista, int num_soldado);
 void josefo(Lista* lista, int pulo);
 
-// Usa o tamanho da lista no for para percorrer todos os itens e mostrar os soldados.
+// Função para exibir todos os soldados na lista
 void mostrar_soldados(Lista* lista) {
-    No* item = lista->cabeca->proximo;
+    No* item = lista->cabeca->proximo;  // Começa no primeiro soldado após o cabeça
     int c;
 
     printf("Soldados: ");
+    // Percorre todos os soldados usando o tamanho da lista
     for (c = 0; c < lista->tamanho; c++) {
-        printf("%d ", item->num);
-        item = item->proximo;
+        printf("%d ", item->num);      // Imprime o número do soldado
+        item = item->proximo;          // Avança para o próximo soldado
     }
     printf("\n");
 }
 
-// TODO verificar se o valor digitado é inteiro(excluindo char, \n ou EOF).
+// Função para ler a quantidade de soldados do usuário
 void inserir_soldados(Lista* lista) {
     int resp_soldados, teste, ch;
     
     printf("Insira o número de soldados(inserir 0 sai do programa): ");
     teste = scanf("%d", &resp_soldados);
     printf("\n");
+    // Loop para validar entrada do usuário
     while (teste == 0) {
-        // TODO Entender o que é fprint
-        // Faz a validação do valor digitado pelo usuário
         fprintf(stderr, "Valor inválido. Insira um número inteiro!\n");
         printf("Insira o número de soldados(inserir 0 sai do programa): ");
+        // Limpa o buffer de entrada
         do {
             ch = getchar();
         } while ((ch != EOF) && (ch != '\n'));
@@ -42,18 +43,20 @@ void inserir_soldados(Lista* lista) {
         printf("\n");
     }
     if (resp_soldados != 0) {
-        popular_lista(lista, resp_soldados);
+        popular_lista(lista, resp_soldados);  // Preenche a lista com soldados
     } else {
         printf("Tchau!\n");
     }
 }
 
+// Função para ler o tamanho do pulo do usuário
 int inserir_pulo() {
     int resp_pulos, teste, ch;
 
     while (1) {   
         printf("Insira o tamanho do pulo(exceto 0): ");
         teste = scanf("%d", &resp_pulos);
+        // Valida a entrada do usuário
         while (teste == 0) {
             fprintf(stderr, "Valor inválido. Insira um número inteiro!\n");
             printf("Insira o tamanho do pulo(exceto 0): ");
@@ -65,27 +68,19 @@ int inserir_pulo() {
         if (resp_pulos == 0) {
             printf("Não se pode ter um pulo de 0\n");
         } else {
-            // josefo(lista, resp_pulos);
-            // break;
-            return resp_pulos;
+            return resp_pulos;  // Retorna o pulo válido
         }
     }
 }
 
-/*
-Recebe o valor dos soldados que vão ser adicionados
-criando um novo nó a cada repetição.
-*/
+// Função para preencher a lista com soldados
 void popular_lista(Lista* lista, int total_soldados) {
     int c;
 
     for (c = 1; c < total_soldados+1; c++) {
         No* soldado = (No *)malloc(sizeof(No));
         if (lista->tamanho == 0) {
-            /*
-            A primeira adição de um soldado é diferente por que 
-            ele precisa apontar pro nó cabeça e o nó cabeça precisa apontar pra ele.
-            */
+            // Primeiro soldado: conecta o cabeça ao novo nó
             soldado->proximo = lista->cabeca;
             soldado->anterior = lista->cabeca;
             soldado->num = c;
@@ -93,10 +88,7 @@ void popular_lista(Lista* lista, int total_soldados) {
             lista->cabeca->anterior = soldado;
             lista->tamanho++;
         } else {
-            /* 
-            Qualquer outro soldado é adicionado dessa forma apontando pro último soldado(soldado que o nó cabeça sempre aponta)
-            e depois apontando pro nó cabeça, já que esse novo soldado se torna o último da lista.
-            */
+            // Soldados subsequentes: insere no final da lista
             soldado->proximo = lista->cabeca;
             soldado->anterior = lista->cabeca->anterior;
             soldado->num = c;
@@ -105,95 +97,83 @@ void popular_lista(Lista* lista, int total_soldados) {
             lista->tamanho++;
         }
     }
-    mostrar_soldados(lista);
+    mostrar_soldados(lista);  // Exibe a lista após criação
 }
 
+// Função para remover um soldado específico da lista
 void remover_soldado(Lista* lista, int num_soldado) {
-    No* item = lista->cabeca->proximo;
+    No* item = lista->cabeca->proximo;  // Começa no primeiro soldado
     int c = 0;
 
+    // Procura o soldado a ser removido
     while (c < lista->tamanho) {
         if (num_soldado == item->num) {
-            /* 
-            O soldado anterior recebe o endereço do próximo soldado 
-            e o próximo soldado recebe o endereço do soldado anterior,
-            depois o soldado que não é mais apontado por nada é liberado da memória com free e a execução para.
-            */
-            printf("Soldado removido: %d\n", item->num);
+            // Ajusta os ponteiros para pular o nó removido
             item->anterior->proximo = item->proximo;
             item->proximo->anterior = item->anterior;
             lista->tamanho--;
-            free(item);
+            free(item);  // Libera a memória do nó
             mostrar_soldados(lista);
             break;
         } else {
-            item = item->proximo;
+            item = item->proximo;  // Continua a busca
         }
         c++;
     }
 }
 
+// Função principal que resolve o problema de Josephus
 void josefo(Lista* lista, int pulo) {
-    /* O ponteiro auxiliar serve pra guardar a referência da lista
-    pois a remoção do elemento faz a função perder a referência da lista.
-    */ 
-    No* aux;
-    if (pulo > 0) {
+    No* aux;  // Ponteiro auxiliar para navegação
+
+    if (pulo > 0) {  // Pulo positivo: navegação para frente
         No* item = lista->cabeca->proximo;
         int c = 1;
 
-        // While 1 (true) faz a lista circular ser lida infinitamente.
         while (1) {
-            // Ignora o nó de index 0(nó cabeça) e faz apontar pro próximo item da lista.
-            if (item->num != 0) {
-                if (lista->tamanho == 1) {
+            if (item->num != 0) {  // Ignora o nó cabeça
+                if (lista->tamanho == 1) {  // Último soldado restante
                     printf("O último soldado foi %d\n", item->num);
-                    // Quando restar apenas um elemeno na lista com exceção do nó cabeça o programa para.
                     break;
                 }
 
-                /* 
-                Só remove o soldado quando o valor de C for igual o do pulo, usa a variável auxiliar pra guardar o ponteiro do próximo
-                depois remove e então a variável item recebe o valor guardado na variável auxiliar.
-                */
-                if (c == pulo) {
+                if (c == pulo) {  // Encontrou o soldado a ser removido
                     aux = item->proximo;
                     remover_soldado(lista, item->num);
-                    c = 1;
+                    c = 1;  // Reinicia a contagem
                     item = aux;
-                    pulo = inserir_pulo();
+                    pulo = inserir_pulo();  // Solicita novo pulo
                 } else {
-                    item = item->proximo;
+                    item = item->proximo;  // Continua navegação
                     c++;
                 }
             } else {
-                item = item->proximo;
+                item = item->proximo;  // Pula o nó cabeça
             }
         }
-    } else {
-        // Lê a lista ao contrário
+    } else {  // Pulo negativo: navegação para trás
         No* item = lista->cabeca->anterior;
         int c = -1;
 
         while (1) {
-            if (item->num != 0) {
-                if (lista->tamanho == 1) {
+            if (item->num != 0) {  // Ignora o nó cabeça
+                if (lista->tamanho == 1) {  // Último soldado restante
                     printf("O último soldado foi %d\n", item->num);
                     break;
                 }
 
-                if (c == pulo) {
+                if (c == pulo) {  // Encontrou o soldado a ser removido
                     aux = item->anterior;
                     remover_soldado(lista, item->num);
-                    c = -1;
+                    c = -1;  // Reinicia a contagem
                     item = aux;
-                    pulo = inserir_pulo();
+                    pulo = inserir_pulo();  // Solicita novo pulo
                 } else {
-                    item = item->anterior;
+                    item = item->anterior;  // Continua navegação
                     c--;
                 }
             } else {
-                item = item->anterior;
+                item = item->anterior;  // Pula o nó cabeça
             }
         }
     }

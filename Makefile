@@ -1,10 +1,14 @@
 COMPILER=gcc
 
-all: josefo.c
-	$(COMPILER) $?
+all: build run clean
 
-run:
-	./a.out
+build: main.c
+	$(COMPILER) $< -o main
+
+run: build
+	./main
 
 clean:
-	rm *.out
+	rm -f main
+
+.PHONY: all build run clean
